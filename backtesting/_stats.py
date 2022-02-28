@@ -40,7 +40,7 @@ def compute_stats(
         risk_free_rate: float = 0,
 ) -> pd.Series:
     assert -1 < risk_free_rate < 1
-
+    print("a")
     index = ohlc_data.index
     dd = 1 - equity / np.maximum.accumulate(equity)
     dd_dur, dd_peaks = compute_drawdown_duration_peaks(pd.Series(dd, index=index))
@@ -94,6 +94,14 @@ def compute_stats(
     s.loc['Return [%]'] = (equity[-1] - equity[0]) / equity[0] * 100
     c = ohlc_data.Close.values
     s.loc['Buy & Hold Return [%]'] = (c[-1] - c[0]) / c[0] * 100  # long-only return
+    _df = pd.DataFrame(data={"x": c, "y": equity_df['Equity'].values}, index=index).pct_change(1).dropna()
+    
+    y = _df["y"].values
+    x = _df["x"].values
+    A = np.vstack([x, np.ones(len(x))]).T
+    beta, alpha = np.linalg.lstsq(A, y, rcond=None)[0]
+    alpha = round(alpha, 4)
+    beta = round(beta, 4)
 
     gmean_day_return: float = 0
     day_returns = np.array(np.nan)
@@ -140,7 +148,8 @@ def compute_stats(
 
     s.loc['_strategy'] = strategy_instance
     s.loc['_equity_curve'] = equity_df
-    s.loc['_trades'] = trades_df
+    s.loc['alpha'] = alpha
+    s.loc['beta'] = beta
 
     s = _Stats(s)
     return s
