@@ -40,7 +40,6 @@ def compute_stats(
         risk_free_rate: float = 0,
 ) -> pd.Series:
     assert -1 < risk_free_rate < 1
-    print("a")
     index = ohlc_data.index
     dd = 1 - equity / np.maximum.accumulate(equity)
     dd_dur, dd_peaks = compute_drawdown_duration_peaks(pd.Series(dd, index=index))
@@ -148,6 +147,7 @@ def compute_stats(
 
     s.loc['_strategy'] = strategy_instance
     s.loc['_equity_curve'] = equity_df
+    s.loc['_trades'] = trades_df
     s.loc['alpha [%]'] = alpha
     s.loc['beta [%]'] = beta
 
