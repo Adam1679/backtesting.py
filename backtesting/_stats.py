@@ -100,8 +100,8 @@ def compute_stats(
     x = _df["x"].values
     A = np.vstack([x, np.ones(len(x))]).T
     beta, alpha = np.linalg.lstsq(A, y, rcond=None)[0]
-    alpha = round(alpha, 4)
-    beta = round(beta, 4)
+    alpha = round(alpha * 100, 4)
+    beta = round(beta * 100, 4)
 
     gmean_day_return: float = 0
     day_returns = np.array(np.nan)
@@ -148,8 +148,8 @@ def compute_stats(
 
     s.loc['_strategy'] = strategy_instance
     s.loc['_equity_curve'] = equity_df
-    s.loc['alpha'] = alpha
-    s.loc['beta'] = beta
+    s.loc['alpha [%]'] = alpha
+    s.loc['beta [%]'] = beta
 
     s = _Stats(s)
     return s
