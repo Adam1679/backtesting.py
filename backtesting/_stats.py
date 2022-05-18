@@ -70,6 +70,8 @@ def compute_stats(
 
     pl = trades_df['PnL']
     returns = trades_df['ReturnPct']
+    returns_long = trades_df.loc[trades_df["Size"] > 0]['ReturnPct']
+    returns_short = trades_df.loc[trades_df["Size"] < 0]['ReturnPct']
     durations = trades_df['Duration']
 
     def _round_timedelta(value, _period=_data_period(index)):
@@ -137,12 +139,27 @@ def compute_stats(
     s.loc['Win Rate [%]'] = np.nan if not n_trades else (pl > 0).sum() / n_trades * 100  # noqa: E501
     s.loc['Best Trade [%]'] = returns.max() * 100
     s.loc['Worst Trade [%]'] = returns.min() * 100
+
+    s.loc['Best Trade [%] (long)'] = returns_long.max() * 100
+    s.loc['Worst Trade [%] (long)'] = returns_long.min() * 100
+
+    s.loc['Best Trade [%] (short)'] = returns_short.max() * 100
+    s.loc['Worst Trade [%] (short)'] = returns_short.min() * 100
+
     mean_return = geometric_mean(returns)
+    mean_return_long = geometric_mean(returns_long)
+    mean_return_short = geometric_mean(returns_short)
     s.loc['Avg. Trade [%]'] = mean_return * 100
+    s.loc['Avg. Trade [%](long)'] = mean_return_long * 100
+    s.loc['Avg. Trade [%](short)'] = mean_return_short * 100
     s.loc['Max. Trade Duration'] = _round_timedelta(durations.max())
     s.loc['Avg. Trade Duration'] = _round_timedelta(durations.mean())
     s.loc['Profit Factor'] = returns[returns > 0].sum() / (abs(returns[returns < 0].sum()) or np.nan)  # noqa: E501
+    s.loc['Profit Factor (long)'] = returns_long[returns_long > 0].sum() / (abs(returns_long[returns_long < 0].sum()) or np.nan)  # noqa: E501
+    s.loc['Profit Factor (short)'] = returns_short[returns_short > 0].sum() / (abs(returns_short[returns_short < 0].sum()) or np.nan)  # noqa: E501
     s.loc['Expectancy [%]'] = returns.mean() * 100
+    s.loc['Expectancy [%](long)'] = returns_long.mean() * 100
+    s.loc['Expectancy [%](short)'] = returns_short.mean() * 100
     s.loc['SQN'] = np.sqrt(n_trades) * pl.mean() / (pl.std() or np.nan)
 
     s.loc['_strategy'] = strategy_instance
