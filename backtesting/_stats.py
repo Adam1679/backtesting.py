@@ -154,9 +154,9 @@ def compute_stats(
     s.loc['Avg. Trade [%](short)'] = mean_return_short * 100
     s.loc['Max. Trade Duration'] = _round_timedelta(durations.max())
     s.loc['Avg. Trade Duration'] = _round_timedelta(durations.mean())
-    s.loc['Profit Factor'] = returns[returns > 0].sum() / (abs(returns[returns < 0].sum()) or np.nan)  # noqa: E501
-    s.loc['Profit Factor (long)'] = returns_long[returns_long > 0].sum() / (abs(returns_long[returns_long < 0].sum()) or np.nan)  # noqa: E501
-    s.loc['Profit Factor (short)'] = returns_short[returns_short > 0].sum() / (abs(returns_short[returns_short < 0].sum()) or np.nan)  # noqa: E501
+    s.loc['Profit Factor'] = returns[returns > 0].mean() / (abs(returns[returns < 0].mean()) or np.nan)  # noqa: E501
+    s.loc['Profit Factor (long)'] = returns_long[returns_long > 0].mean() / (abs(returns_long[returns_long < 0].mean()) or np.nan)  # noqa: E501
+    s.loc['Profit Factor (short)'] = returns_short[returns_short > 0].mean() / (abs(returns_short[returns_short < 0].mean()) or np.nan)  # noqa: E501
     s.loc['Expectancy [%]'] = returns.mean() * 100
     s.loc['Expectancy [%](long)'] = returns_long.mean() * 100
     s.loc['Expectancy [%](short)'] = returns_short.mean() * 100
